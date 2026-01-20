@@ -56,8 +56,8 @@ def main():
         dlg = gui.DlgFromDict(subject_info, title='Mackworth + EEG')
         if dlg.OK:
             #questionnaire
-            run_kss_gui(subject_info['subject_id'], 'KSS – Pre-Task')
-            run_desq(subject_info['subject_id'], 'DESQ - Pre-Task')
+            #run_kss_gui(subject_info['subject_id'], 'KSS – Pre-Task')
+            #run_desq(subject_info['subject_id'], 'DESQ - Pre-Task')
 
             win = visual.Window(
                 fullscr=True,
@@ -111,6 +111,14 @@ def main():
         else:
             core.quit()
     elif session_type == SessionType.PRACTICE:
+        win = visual.Window(
+            fullscr=True,
+            waitBlanking=True,
+            color='black',
+            units='pix'
+        )
+        event_stream = []
+        global_clock = core.Clock()
         mackworth_clock = MackworthClock(
             win,
             radius=mackworth_param['Clock radius (pixels)'],
