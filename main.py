@@ -62,7 +62,8 @@ def main():
             win = visual.Window(
                 fullscr=True,
                 waitBlanking=True,
-                color='black',
+                color=130,
+                colorSpace='rgb255',
                 units='pix'
             )
             run_vas_f(win, subject_info['subject_id'], 'VAS-F - Pre-Task')
@@ -114,7 +115,8 @@ def main():
         win = visual.Window(
             fullscr=True,
             waitBlanking=True,
-            color='black',
+            color=130,
+            colorSpace='rgb255',
             units='pix'
         )
         event_stream = []
