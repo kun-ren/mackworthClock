@@ -1,15 +1,16 @@
-from psychopy import gui, core, visual
+from psychopy import gui, core, visual, monitors
 from enums import SessionType
 from mackworth_clock import MackworthClock
-from prompt import RSEO_TEXT, RSEC_TEXT
+from prompt import RSEO_TEXT, RSEC_TEXT, exp_info
 from questionnaire import run_kss_gui, run_vas_f, run_nasa_tlx, run_desq
 import csv
-exp_info = {
-    'Subject_id': '',
-    'Session': '',
-    'Age': '',
-    'Gender': ['male', 'female', 'other'],
-}
+import subprocess
+
+si = subprocess.STARTUPINFO()
+si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+
+SCREEN_PIXELS = (1920, 1080)
 
 def get_session_type_dialog() -> SessionType:
     session_types = [session_type.value for session_type in list(SessionType)]
@@ -23,9 +24,9 @@ def get_session_type_dialog() -> SessionType:
 
 def mackworth_parameters() -> dict:
     mackworth_param = {
-        'Clock radius (pixels)': 600,
-        'White dot size': 6,
-        'Red dot size': 10,
+        'Clock radius (pixels)': 400,
+        'White dot size': 2,
+        'Red dot size': 4,
         'Clock Steps': 96,
         'Jump interval (ms)': 800,
         'Warmup_steps': 4,
@@ -34,6 +35,7 @@ def mackworth_parameters() -> dict:
         'Series number': 18,
         'Steps per series': 180,
         'Target trial rate': 0.04,
+        'Distance To Monitor (cm)': 80,
     }
 
     dlg = gui.DlgFromDict(mackworth_param, title='Mackworth parameters: ')
@@ -46,6 +48,11 @@ def mackworth_parameters() -> dict:
 def main():
     mackworth_param = mackworth_parameters()
     session_type = get_session_type_dialog()
+
+    mon = monitors.Monitor('winMon')
+    mon.setDistance(mackworth_param['Distance To Monitor (cm)'])
+    mon.setSizePix(SCREEN_PIXELS)
+
     if session_type == SessionType.FORMAL:
         subject_info = {
             'subject_id': '',
@@ -60,13 +67,16 @@ def main():
             #run_desq(subject_info['subject_id'], 'DESQ - Pre-Task')
 
             win = visual.Window(
-                fullscr=True,
+                fullscr=False,
+                monitor=mon,
+                size=SCREEN_PIXELS,
                 waitBlanking=True,
                 color=130,
                 colorSpace='rgb255',
-                units='pix'
+                units='pix',
+                allowGUI=False
             )
-            run_vas_f(win, subject_info['subject_id'], 'VAS-F - Pre-Task')
+            #run_vas_f(win, subject_info['subject_id'], 'VAS-F - Pre-Task')
 
             # save info
             mackworth_clock = MackworthClock(
@@ -88,6 +98,11 @@ def main():
             global_clock = core.Clock()
             mackworth_clock.show_instructions(RSEO_TEXT)
             mackworth_clock.resting_state(event_stream, global_clock)
+
+            if subject_info['session'] == 'flicker':
+
+                process = subprocess.Popen(r"./VisualStimuli.exe", creationflags=subprocess.CREATE_NO_WINDOW)
+
             mackworth_clock.instantiate(event_stream, global_clock)
             mackworth_clock.resting_state(event_stream, global_clock, eyes_open=False)
             keys = event_stream[0].keys()
@@ -102,23 +117,28 @@ def main():
             print(f"the event streaming has been written into {event_file_name}")
 
             # post questionnaire
-            run_kss_gui(subject_info['subject_id'], 'KSS – Post-Task')
+            #run_kss_gui(subject_info['subject_id'], 'KSS – Post-Task')
             #todo
 
             # only after Task
-            run_nasa_tlx(win, subject_info['subject_id'], 'NASA - TLX - Pre-Task')
+            #run_nasa_tlx(win, subject_info['subject_id'], 'NASA - TLX - Pre-Task')
 
             # end of exprienment
         else:
             core.quit()
     elif session_type == SessionType.PRACTICE:
         win = visual.Window(
-            fullscr=True,
+            fullscr=False,
+            monitor=mon,
+            size=SCREEN_PIXELS,
             waitBlanking=True,
             color=130,
             colorSpace='rgb255',
-            units='pix'
+            units='pix',
+            allowGUI=False
         )
+        #win.winHandle.lower()
+        #win.winHandle._window.set_always_on_top(False)
         event_stream = []
         global_clock = core.Clock()
         mackworth_clock = MackworthClock(

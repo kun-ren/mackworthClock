@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<ArrayOfFlicker>
+  <Flicker>
+    <Name>Flicker</Name>
+    <X>0</X>
+    <Y>0</Y>
+    <Width>3215</Width>
+    <Height>1996</Height>
+    <Type>Square</Type>
+    <Frequency>12.0</Frequency>
+    <Phase>0.0</Phase>
+    <Opacity_Min>0</Opacity_Min>
+    <Opacity_Max>20</Opacity_Max>
+    <Color>
+      <A>255</A>
+      <R>130</R>
+      <G>130</G>
+      <B>130</B>
+    </Color>
+    <IsImageFlicker>false</IsImageFlicker>
+    <sequence>
+      <Type>Block</Type>
+      <contained_sequence>
+        <SequenceValue>
+          <Type>Active</Type>
+          <contained_sequence/>
+          <cond>Never</cond>
+          <value>0.0</value>
+        </SequenceValue>
+      </contained_sequence>
+      <cond>Never</cond>
+      <value>0.0</value>
+    </sequence>
+    <image/>
+  </Flicker>
+</ArrayOfFlicker>

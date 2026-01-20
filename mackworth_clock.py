@@ -2,7 +2,7 @@ from psychopy import visual, core, event,gui, parallel, sound
 import math
 import random
 from enums import Triggers, FLICKER_OFFSET
-#port = parallel.ParallelPort(address=0x378) # todo
+#port = parallel.ParallelPort(address=0x0378) # todo
 
 class MackworthClock:
     def __init__(self, win, radius=600, white_dot_size=6, red_dot_size=10, steps=96, step_interval=800, warmup_steps=4, response_time=3000, minimun_target_gap=8, series_num=18, steps_per_series=180, target_rate=0.04):

@@ -1,4 +1,9 @@
-
+exp_info = {
+    'Subject_id': '',
+    'Session': '',
+    'Age': '',
+    'Gender': ['male', 'female', 'other'],
+}
 
 RSEO_TEXT = (
     "please keep your eyes OPEN in the next.\n\n"
