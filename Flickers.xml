@@ -4,8 +4,8 @@
     <Name>Flicker</Name>
     <X>0</X>
     <Y>0</Y>
-    <Width>3215</Width>
-    <Height>1996</Height>
+    <Width>1920</Width>
+    <Height>1080</Height>
     <Type>Square</Type>
     <Frequency>12.0</Frequency>
     <Phase>0.0</Phase>
@@ -13,9 +13,9 @@
     <Opacity_Max>20</Opacity_Max>
     <Color>
       <A>255</A>
-      <R>130</R>
-      <G>130</G>
-      <B>130</B>
+      <R>155</R>
+      <G>155</G>
+      <B>155</B>
     </Color>
     <IsImageFlicker>false</IsImageFlicker>
     <sequence>
