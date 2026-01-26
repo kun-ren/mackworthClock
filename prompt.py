@@ -8,16 +8,16 @@ exp_info = {
 paradigm_TEXT = (
     "Focus on a red dot in a clock\n\n"
     "The red dot will step one or two grey dots along the clock every time\n\n"
-    "Press SAPCE when your notice the red dot skipped a step\n\n"
-    "Press SPACEBAR to proceeed to the clock now"
+    "Press SAPCE BAR when your notice the red dot skipped a step\n\n"
+    "Press SPACE BAR to proceeed to the clock now"
 )
 
 RSEO_TEXT = ("Plese keep your eyes open in the next\n\n"
-              "Press SPACEBAR to continue")
+              "Press SPACE BAR to continue")
 
 RSEC_TEXT = ("Plese close your eyes open in the next\n\n"
               "Open it again after you hear a beep\n\n"
-              "Press SPACEBAR to continue")
+              "Press SPACE BAR to continue")
 
 
 KSS_INSTRUCTION = (
