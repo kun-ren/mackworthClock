@@ -16,7 +16,7 @@ try:
     ctypes.windll.shcore.SetProcessDpiAwareness(2)  # per monitor
 except:
     ctypes.windll.user32.SetProcessDPIAware()
-# -------------------- Windows API 辅助 --------------------
+# -------------------- Windows API --------------------
 user32 = ctypes.windll.user32
 
 HWND_TOPMOST = -1
@@ -27,7 +27,7 @@ SWP_SHOWWINDOW = 0x0040
 
 
 def get_hwnds_for_pid(pid):
-    """获取指定 PID 的可见窗口 HWND 列表"""
+    """get windows HWND list"""
     hwnds = []
 
     EnumWindows = user32.EnumWindows
@@ -47,7 +47,7 @@ def get_hwnds_for_pid(pid):
 
 
 def set_window_topmost_noactivate(hwnd):
-    """将窗口置顶显示但不抢焦点"""
+    """top most a window"""
     user32.SetWindowPos(
         hwnd,
         HWND_TOPMOST,
@@ -57,22 +57,22 @@ def set_window_topmost_noactivate(hwnd):
 
 
 def move_window_to_screen(hwnd, x, y, width, height):
-    """将窗口移动到指定屏幕并调整大小"""
+    """move and resize a window"""
     SWP_NOZORDER = 0x0004
     SWP_SHOWWINDOW = 0x0040
     user32.SetWindowPos(hwnd, HWND_TOPMOST, x, y, width, height, SWP_NOZORDER | SWP_SHOWWINDOW | SWP_NOACTIVATE)
 
 
-# -------------------- 获取屏幕信息 --------------------
+# -------------------- screen info --------------------
 def get_screens_info():
     """
-    使用 PsychoPy 自带方法获取屏幕信息
-    返回列表，每个元素: {"width": ..., "height": ..., "x": 0, "y": 0}
+
+    return a list of  {"width": ..., "height": ..., "x": 0, "y": 0}
     """
     screens = []
     for i, m in enumerate(get_monitors()):
         screens.append({
-            "x": m.x,  # 简单起点，如果有多屏可以用更复杂逻辑
+            "x": m.x, # start point
             "y": m.y,
             "width": m.width,
             "height": m.height
@@ -80,22 +80,21 @@ def get_screens_info():
     return screens
 
 
-# -------------------- VisualStimuli 启动 --------------------
+# -------------------- VisualStimuli --------------------
 def launch_visualstimuli_on_screen(exe_path, screen_index, paradigm_winHandle):
     """
-    启动 VisualStimuli.exe 并显示在指定屏幕，顶层显示但不抢焦点
+    lauch VisualStimuli.exe
     """
     screens = get_screens_info()
     if screen_index >= len(screens):
         raise ValueError(f"screen_index {screen_index} out of range")
 
     target = screens[screen_index]
-    # 启动进程
     CREATE_NO_WINDOW = 0x08000000
     #process = subprocess.Popen(exe_path, creationflags=CREATE_NO_WINDOW)
     process = subprocess.Popen(exe_path, startupinfo=info)
 
-    # 等待窗口创建
+    # wait for the creation of the flicker window
     hwnds = []
     timeout = 10
     start = time.time()
@@ -105,9 +104,9 @@ def launch_visualstimuli_on_screen(exe_path, screen_index, paradigm_winHandle):
             break
         time.sleep(0.1)
     if not hwnds:
-        raise RuntimeError("VisualStimuli 窗口未创建")
+        raise RuntimeError("VisualStimuli window not found")
 
-    # 移动并置顶
+    # move and top up
     for hwnd in hwnds:
         move_window_to_screen(hwnd, target["x"], target["y"], target["width"], target["height"])
         #set_window_topmost_noactivate(hwnd)
