@@ -1,11 +1,15 @@
-from psychopy import visual, core, event,gui, parallel, sound
+from psychopy import visual, core, event, parallel, sound
 import math
 import random
-from enums import Triggers, FLICKER_OFFSET
-#port = parallel.ParallelPort(address=0x0378) # todo
+from enums import Triggers
+
+port = parallel.ParallelPort(address=0x0378)  # todo
+
 
 class MackworthClock:
-    def __init__(self, win, radius=600, white_dot_size=6, red_dot_size=10, steps=96, step_interval=800, warmup_steps=4, response_time=3000, minimun_target_gap=8, series_num=18, steps_per_series=180, target_rate=0.04):
+    def __init__(self, win, radius=600, white_dot_size=6, red_dot_size=10, steps=96, step_interval=800, warmup_steps=4,
+                 response_time=3000, minimun_target_gap=8, series_num=18, steps_per_series=180, target_rate=0.04,
+                 with_flicker=False):
 
         self.win = win
         self.radius = radius
@@ -21,7 +25,7 @@ class MackworthClock:
         self.target_rate = target_rate
         self.white_dots = []
         self.red_dot = None
-
+        self.with_flicker = with_flicker
 
     def generate_all_series(self):
         targets = []
@@ -71,7 +75,6 @@ class MackworthClock:
             for step in range(self.steps_per_series * self.series_num)
         ]
 
-
         step_clock = core.Clock()
 
         # ========= session start =========
@@ -91,22 +94,30 @@ class MackworthClock:
             if is_target:
                 num_steps_red_dot_jump_over += 1
 
-            angle = 2 * math.pi * ((index+num_steps_red_dot_jump_over) % self.steps) / self.steps
+            angle = 2 * math.pi * ((index + num_steps_red_dot_jump_over) % self.steps) / self.steps
             self.red_dot.pos = (
                 self.radius * math.sin(angle),
                 self.radius * math.cos(angle)
             )
 
-
             for dot in self.white_dots:
                 dot.draw()
             self.red_dot.draw()
 
-            trigger = (
-                Triggers.TARGET_TRIAL_FLICKER
-                if is_target else
-                Triggers.NONE_TARGET_TRIAL_FLICKER
-            )
+            trigger = None
+            if self.with_flicker:
+
+                trigger = (
+                    Triggers.TARGET_TRIAL_FLICKER
+                    if is_target else
+                    Triggers.NONE_TARGET_TRIAL_FLICKER
+                )
+            else:
+                trigger = (
+                    Triggers.TARGET_TRIAL_NO_FLICKER
+                    if is_target else
+                    Triggers.NONE_TARGET_TRIAL_NO_FLICKER
+                )
 
             self.win.callOnFlip(
                 self.atomic_event,
@@ -116,7 +127,6 @@ class MackworthClock:
             )
 
             self.win.callOnFlip(step_clock.reset)
-
 
             if is_target:
                 rt_timer = core.CountdownTimer()
@@ -129,19 +139,28 @@ class MackworthClock:
 
             # ===== non block waiting for step interval =====
             while step_clock.getTime() < step_interval_sec:
-
-                if 'escape' in event.getKeys():
+                key_list = event.getKeys()
+                if 'escape' in key_list:
                     self.atomic_event(event_stream, global_clock, Triggers.END)
                     core.quit()
 
                 if rt_timer:
                     if rt_timer.getTime() > 0:
-                        if 'space' in event.getKeys():
-                            self.atomic_event(event_stream, global_clock, Triggers.SUCCESS_RESPONSE_FLICKER)
+                        if 'space' in key_list:
+                            self.atomic_event(event_stream, global_clock,
+                                              (Triggers.SUCCESS_RESPONSE_FLICKER if self.with_flicker
+                                               else Triggers.SUCCESS_RESPONSE_NO_FLICKER))
                             rt_timer = None
                     else:
-                        self.atomic_event(event_stream, global_clock, Triggers.FAILED_RESPONSE_FLICKER)
+                        self.atomic_event(event_stream, global_clock,
+                                          (Triggers.FAILED_RESPONSE_FLICKER if self.with_flicker
+                                           else Triggers.FAILED_RESPONSE_NO_FLICKER))
                         rt_timer = None
+                else:
+                    if 'space' in key_list:
+                        self.atomic_event(event_stream, global_clock,
+                                          (Triggers.MISTAKEN_RESPONSE_FLICKER if self.with_flicker
+                                           else Triggers.MISTAKEN_RESPONSE_NO_FLICKER))
 
         # ========= session end =========
         self.win.callOnFlip(
@@ -151,6 +170,26 @@ class MackworthClock:
             Triggers.END
         )
         self.win.flip()
+
+        # wait till the last target trial being timeout before quiting clock
+
+        while True:
+            if rt_timer:
+                if rt_timer.getTime() > 0:
+                    if 'space' in key_list:
+                        self.atomic_event(event_stream, global_clock,
+                                          (Triggers.SUCCESS_RESPONSE_FLICKER if self.with_flicker
+                                           else Triggers.SUCCESS_RESPONSE_NO_FLICKER))
+                        rt_timer = None
+                        break
+                else:
+                    self.atomic_event(event_stream, global_clock,
+                                      (Triggers.FAILED_RESPONSE_FLICKER if self.with_flicker
+                                       else Triggers.FAILED_RESPONSE_NO_FLICKER))
+                    rt_timer = None
+                    break
+            else:
+                break
 
         return event_stream
 
@@ -178,7 +217,7 @@ class MackworthClock:
         )
 
         # ===== start beep + trigger =====
-        self.win.callOnFlip(beep.play)
+        # self.win.callOnFlip(beep.play)
         self.win.callOnFlip(
             self.atomic_event,
             event_stream,
@@ -199,8 +238,8 @@ class MackworthClock:
             fixation.draw()
             self.win.flip()
 
-
-        self.win.callOnFlip(beep.play)
+        if not eyes_open:
+            self.win.callOnFlip(beep.play)
         self.win.callOnFlip(
             self.atomic_event,
             event_stream,
@@ -227,7 +266,6 @@ class MackworthClock:
             if 'space' in keys:
                 break
 
-
     def atomic_event(self, event_stream, clock, trigger_code):
         """
         atomic event：for callOnFlip
@@ -235,12 +273,11 @@ class MackworthClock:
         """
         t = clock.getTime()
 
-        # port.setData(trigger_code)
-        #core.wait(0.005)
+        port.setData(trigger_code.value)
+        core.wait(0.005)
+        port.setData(0)
 
-        #port.setData(0)
         event_stream.append({
             "time": t,
             "trigger": trigger_code
         })
-

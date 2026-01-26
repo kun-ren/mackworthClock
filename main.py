@@ -1,17 +1,15 @@
-import time
 from psychopy import gui, core, visual, monitors
 from enums import SessionType
 from mackworth_clock import MackworthClock
-from prompt import RSEO_TEXT, RSEC_TEXT, paradigm_TEXT, exp_info
+from prompt import RSEO_TEXT, RSEC_TEXT, paradigm_TEXT
 from questionnaire import run_kss_gui, run_vas_f, run_nasa_tlx, run_desq
 import csv
 import ctypes
-from ctypes import wintypes
 from screen import get_screens_info, launch_visualstimuli_on_screen
 
 user32 = ctypes.windll.user32
 
-task_screen_index = 0 # corresponding to the index in   Setting
+task_screen_index = 1 # corresponding to the index in   Setting
 REST_DURATION = 10
 
 screens = get_screens_info()
@@ -101,6 +99,7 @@ def main():
                 series_num=mackworth_param['Series number'],
                 steps_per_series=mackworth_param['Steps per series'],
                 target_rate=mackworth_param['Target trial rate'],
+                with_flicker=(subject_info['session'] == 'flicker')
             )
 
             event_stream = []
@@ -155,8 +154,6 @@ def main():
             allowGUI=False,
             screen=task_screen_index,
         )
-        #win.winHandle.lower()
-        #win.winHandle._window.set_always_on_top(False)
         event_stream = []
         global_clock = core.Clock()
         mackworth_clock = MackworthClock(

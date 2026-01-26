@@ -13,12 +13,11 @@ paradigm_TEXT = (
 )
 
 RSEO_TEXT = ("Plese keep your eyes open in the next\n\n"
-              "Press SPACE BAR to continue")
+             "Press SPACE BAR to continue")
 
 RSEC_TEXT = ("Plese close your eyes open in the next\n\n"
-              "Open it again after you hear a beep\n\n"
-              "Press SPACE BAR to continue")
-
+             "Open it again after you hear a beep\n\n"
+             "Press SPACE BAR to continue")
 
 KSS_INSTRUCTION = (
     "Karolinska Sleepiness Scale (KSS)\n\n"
@@ -33,7 +32,6 @@ KSS_INSTRUCTION = (
     "8 – Sleepy, some effort to keep awake\n"
     "9 – Very sleepy, great effort to keep awake, fighting sleep\n"
 )
-
 
 VAS_ITEMS = [
     ("Not at all\n tired", "Extremely\n tired"),
@@ -56,21 +54,20 @@ VAS_ITEMS = [
     ("Not at all\n pooped", "Extremely\n pooped")
 ]
 
-
 DESQ_ITEMS = {
-    "Burning eyes": ['YES','NO'],
-    "Itching eyes": ['YES','NO'],
-    "Feeling of a foreign body in the eye": ['YES','NO'],
-    "Excessive tearing": ['YES','NO'],
-    "Excessive blinking": ['YES','NO'],
-    "Redness": ['YES','NO'],
-    "Eye pain": ['YES','NO'],
-    "Blurred vision": ['YES','NO'],
-    "Double vision": ['YES','NO'],
-    "Difficulty focusing": ['YES','NO'],
-    "Increased sensitivity to light": ['YES','NO'],
-    "Headache": ['YES','NO'],
-    "Neck/Shoulder/Back pain": ['YES','NO']
+    "Burning eyes": ['YES', 'NO'],
+    "Itching eyes": ['YES', 'NO'],
+    "Feeling of a foreign body in the eye": ['YES', 'NO'],
+    "Excessive tearing": ['YES', 'NO'],
+    "Excessive blinking": ['YES', 'NO'],
+    "Redness": ['YES', 'NO'],
+    "Eye pain": ['YES', 'NO'],
+    "Blurred vision": ['YES', 'NO'],
+    "Double vision": ['YES', 'NO'],
+    "Difficulty focusing": ['YES', 'NO'],
+    "Increased sensitivity to light": ['YES', 'NO'],
+    "Headache": ['YES', 'NO'],
+    "Neck/Shoulder/Back pain": ['YES', 'NO']
 }
 
 NASA_TLX_DIMENSIONS = [
@@ -81,4 +78,3 @@ NASA_TLX_DIMENSIONS = [
     "Effort: How hard did you have to work to accomplish your level of performance?",
     "Frustration: How insecure, discouraged, irritated, stressed, and annoyed were you?"
 ]
-
