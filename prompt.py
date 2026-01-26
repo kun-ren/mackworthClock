@@ -5,19 +5,19 @@ exp_info = {
     'Gender': ['male', 'female', 'other'],
 }
 
-RSEO_TEXT = (
-    "please keep your eyes OPEN in the next.\n\n"
-    "Relax, remain as still as possible\n\n"
-    "This session will offically begin when your hear beep (after 2 mins estimated) \n\n"
-    "Focus on a red dot in a clock when the session begins \n\n"
-    "The red dot will step One or Two grey dots along the clock every time\n\n"
+paradigm_TEXT = (
+    "Focus on a red dot in a clock\n\n"
+    "The red dot will step one or two grey dots along the clock every time\n\n"
     "Press SAPCE when your notice the red dot skipped a step\n\n"
-    "Press SPACE to proceeed to Resting State after your understand this."
+    "Press SPACEBAR to proceeed to the clock now"
 )
 
-RSEC_TEXT = (
-    "Eyes Close"
-    )
+RSEO_TEXT = ("Plese keep your eyes open in the next\n\n"
+              "Press SPACEBAR to continue")
+
+RSEC_TEXT = ("Plese close your eyes open in the next\n\n"
+              "Open it again after you hear a beep\n\n"
+              "Press SPACEBAR to continue")
 
 
 KSS_INSTRUCTION = (

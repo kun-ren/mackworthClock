@@ -1,16 +1,23 @@
+import time
 from psychopy import gui, core, visual, monitors
 from enums import SessionType
 from mackworth_clock import MackworthClock
-from prompt import RSEO_TEXT, RSEC_TEXT, exp_info
+from prompt import RSEO_TEXT, RSEC_TEXT, paradigm_TEXT, exp_info
 from questionnaire import run_kss_gui, run_vas_f, run_nasa_tlx, run_desq
 import csv
-import subprocess
+import ctypes
+from ctypes import wintypes
+from screen import get_screens_info, launch_visualstimuli_on_screen
 
-si = subprocess.STARTUPINFO()
-si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+user32 = ctypes.windll.user32
 
+task_screen_index = 0 # corresponding to the index in   Setting
 
-SCREEN_PIXELS = (1920, 1080)
+screens = get_screens_info()
+
+print(screens)
+
+task_monitor = screens[task_screen_index]
 
 def get_session_type_dialog() -> SessionType:
     session_types = [session_type.value for session_type in list(SessionType)]
@@ -51,7 +58,7 @@ def main():
 
     mon = monitors.Monitor('winMon')
     mon.setDistance(mackworth_param['Distance To Monitor (cm)'])
-    mon.setSizePix(SCREEN_PIXELS)
+    mon.setSizePix((task_monitor['width'], task_monitor['height']))
 
     if session_type == SessionType.FORMAL:
         subject_info = {
@@ -69,12 +76,13 @@ def main():
             win = visual.Window(
                 fullscr=False,
                 monitor=mon,
-                size=SCREEN_PIXELS,
+                size=(task_monitor['width'],task_monitor['height']),
                 waitBlanking=True,
                 color=130,
                 colorSpace='rgb255',
                 units='pix',
-                allowGUI=False
+                allowGUI=False,
+                screen=task_screen_index,
             )
             #run_vas_f(win, subject_info['subject_id'], 'VAS-F - Pre-Task')
 
@@ -96,14 +104,22 @@ def main():
 
             event_stream = []
             global_clock = core.Clock()
+            process = None
             mackworth_clock.show_instructions(RSEO_TEXT)
             mackworth_clock.resting_state(event_stream, global_clock)
+            mackworth_clock.show_instructions(RSEC_TEXT)
+            mackworth_clock.resting_state(event_stream, global_clock, eyes_open=False)
 
             if subject_info['session'] == 'flicker':
-
-                process = subprocess.Popen(r"./VisualStimuli.exe", creationflags=subprocess.CREATE_NO_WINDOW)
+                process = launch_visualstimuli_on_screen(r".\VisualStimuli.exe", screen_index=task_screen_index, paradigm_winHandle=win.winHandle)
+            mackworth_clock.show_instructions(paradigm_TEXT)
 
             mackworth_clock.instantiate(event_stream, global_clock)
+            if process:
+                process.terminate()
+            mackworth_clock.show_instructions(RSEO_TEXT)
+            mackworth_clock.resting_state(event_stream, global_clock, eyes_open=True)
+            mackworth_clock.show_instructions(RSEC_TEXT)
             mackworth_clock.resting_state(event_stream, global_clock, eyes_open=False)
             keys = event_stream[0].keys()
 
@@ -130,12 +146,13 @@ def main():
         win = visual.Window(
             fullscr=False,
             monitor=mon,
-            size=SCREEN_PIXELS,
+            size=(task_monitor['width'],task_monitor['height']),
             waitBlanking=True,
             color=130,
             colorSpace='rgb255',
             units='pix',
-            allowGUI=False
+            allowGUI=False,
+            screen=task_screen_index,
         )
         #win.winHandle.lower()
         #win.winHandle._window.set_always_on_top(False)

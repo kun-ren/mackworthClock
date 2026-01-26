@@ -170,21 +170,22 @@ class MackworthClock:
 
         rest_clock = core.Clock()
         beep = sound.Sound('C', secs=0.5)
-        rest_duration = 120  # second
+        rest_duration = 10  # second
         fixation = visual.TextStim(
             win=self.win,
             text='+',
             color='white',
             height=30
         )
+
         # ===== start beep + trigger =====
+        self.win.callOnFlip(beep.play)
         self.win.callOnFlip(
             self.atomic_event,
             event_stream,
             global_clock,
             start_trigger
         )
-        self.win.callOnFlip(beep.play)
         self.win.flip()
 
         rest_clock.reset()
@@ -199,6 +200,7 @@ class MackworthClock:
             fixation.draw()
             self.win.flip()
 
+
         self.win.callOnFlip(beep.play)
         self.win.callOnFlip(
             self.atomic_event,
@@ -206,6 +208,8 @@ class MackworthClock:
             global_clock,
             end_trigger
         )
+        self.win.flip()
+        core.wait(1)
 
     def show_instructions(self, text):
         instruction_text = visual.TextStim(
