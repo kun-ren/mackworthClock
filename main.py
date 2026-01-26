@@ -12,6 +12,7 @@ from screen import get_screens_info, launch_visualstimuli_on_screen
 user32 = ctypes.windll.user32
 
 task_screen_index = 0 # corresponding to the index in   Setting
+REST_DURATION = 10
 
 screens = get_screens_info()
 
@@ -106,9 +107,9 @@ def main():
             global_clock = core.Clock()
             process = None
             mackworth_clock.show_instructions(RSEO_TEXT)
-            mackworth_clock.resting_state(event_stream, global_clock)
+            mackworth_clock.resting_state(event_stream, global_clock, rest_duration=REST_DURATION)
             mackworth_clock.show_instructions(RSEC_TEXT)
-            mackworth_clock.resting_state(event_stream, global_clock, eyes_open=False)
+            mackworth_clock.resting_state(event_stream, global_clock, rest_duration=REST_DURATION, eyes_open=False)
 
             if subject_info['session'] == 'flicker':
                 process = launch_visualstimuli_on_screen(r".\VisualStimuli.exe", screen_index=task_screen_index, paradigm_winHandle=win.winHandle)
@@ -118,9 +119,9 @@ def main():
             if process:
                 process.terminate()
             mackworth_clock.show_instructions(RSEO_TEXT)
-            mackworth_clock.resting_state(event_stream, global_clock, eyes_open=True)
+            mackworth_clock.resting_state(event_stream, global_clock, rest_duration=REST_DURATION, eyes_open=True)
             mackworth_clock.show_instructions(RSEC_TEXT)
-            mackworth_clock.resting_state(event_stream, global_clock, eyes_open=False)
+            mackworth_clock.resting_state(event_stream, global_clock, rest_duration=REST_DURATION, eyes_open=False)
             keys = event_stream[0].keys()
 
             event_file_name = f"subject_{subject_info['subject_id']}_gender_{subject_info['gender']}_session_{subject_info['session']}.csv"

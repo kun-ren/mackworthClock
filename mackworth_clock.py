@@ -154,7 +154,7 @@ class MackworthClock:
 
         return event_stream
 
-    def resting_state(self, event_stream, global_clock, eyes_open=True, prefix="PRE"):
+    def resting_state(self, event_stream, global_clock, rest_duration=120, eyes_open=True, prefix="PRE"):
         """
         Resting state recording
         eyes_open=True  -> RSEO
@@ -170,7 +170,6 @@ class MackworthClock:
 
         rest_clock = core.Clock()
         beep = sound.Sound('C', secs=0.5)
-        rest_duration = 10  # second
         fixation = visual.TextStim(
             win=self.win,
             text='+',
